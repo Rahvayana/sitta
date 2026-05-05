@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Histori Transaksi - SITTA Bahan Ajar</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="histori">
+  <div class="mobile-nav">
+    <label class="sr-only" for="mobile-nav-select">Navigasi</label>
+    <select id="mobile-nav-select">
+      <option value="dashboard.html">Dashboard</option>
+      <option value="stok.html">Informasi Bahan Ajar</option>
+      <option value="tracking.html">Tracking Pengiriman</option>
+      <option value="laporan.html">Laporan</option>
+      <option value="histori.html">Histori Transaksi</option>
+    </select>
+  </div>
+
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Navigasi utama">
+      <div class="brand-lockup">
+        <div class="brand-mark" aria-hidden="true">UT</div>
+        <div>
+          <p class="brand-text">SITTA</p>
+          <p class="brand-title">Bahan Ajar</p>
+        </div>
+      </div>
+      <nav>
+        <ul class="nav-list">
+          <li><a class="nav-link" href="dashboard.html">Dashboard</a></li>
+          <li><a class="nav-link" href="stok.html">Informasi Bahan Ajar</a></li>
+          <li><a class="nav-link" href="tracking.html">Tracking Pengiriman</a></li>
+        </ul>
+        <div class="nav-group">
+          <p class="nav-kicker">Laporan</p>
+          <a class="nav-link" href="laporan.html#monitoring">Monitoring Progress DO</a>
+          <a class="nav-link" href="laporan.html#rekap">Rekap Bahan Ajar</a>
+          <a class="nav-link" href="histori.html">Histori Transaksi</a>
+        </div>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-chip">
+          <strong data-user-name>Admin SITTA</strong>
+          <span data-user-role>Administrator - Pusat</span>
+        </div>
+        <button class="btn ghost" type="button" data-logout>Keluar</button>
+      </div>
+    </aside>
+
+    <main class="page">
+      <header class="topbar">
+        <div class="page-title">
+          <h1>Histori Transaksi Bahan Ajar</h1>
+          <p>Riwayat pemesanan ditampilkan sebagai data simulasi front-end.</p>
+        </div>
+        <div id="local-clock" class="clock-pill" aria-live="polite"></div>
+      </header>
+
+      <section class="content-panel stack">
+        <div class="toolbar">
+          <div class="field">
+            <label for="history-search">Cari transaksi</label>
+            <input id="history-search" type="search" placeholder="Nama, kode barang, status, atau UPBJJ">
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table aria-label="Histori transaksi bahan ajar">
+            <thead>
+              <tr>
+                <th>ID Transaksi</th>
+                <th>Tanggal</th>
+                <th>Nama</th>
+                <th>UPBJJ</th>
+                <th>Kode Barang</th>
+                <th>Jumlah</th>
+                <th>Total</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="history-body"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast" role="alert"></div>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

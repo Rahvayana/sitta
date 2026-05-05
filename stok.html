@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Informasi Stok Bahan Ajar - SITTA</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="stok">
+  <div class="mobile-nav">
+    <label class="sr-only" for="mobile-nav-select">Navigasi</label>
+    <select id="mobile-nav-select">
+      <option value="dashboard.html">Dashboard</option>
+      <option value="stok.html">Informasi Bahan Ajar</option>
+      <option value="tracking.html">Tracking Pengiriman</option>
+      <option value="laporan.html">Laporan</option>
+      <option value="histori.html">Histori Transaksi</option>
+    </select>
+  </div>
+
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Navigasi utama">
+      <div class="brand-lockup">
+        <div class="brand-mark" aria-hidden="true">UT</div>
+        <div>
+          <p class="brand-text">SITTA</p>
+          <p class="brand-title">Bahan Ajar</p>
+        </div>
+      </div>
+      <nav>
+        <ul class="nav-list">
+          <li><a class="nav-link" href="dashboard.html">Dashboard</a></li>
+          <li><a class="nav-link" href="stok.html">Informasi Bahan Ajar</a></li>
+          <li><a class="nav-link" href="tracking.html">Tracking Pengiriman</a></li>
+        </ul>
+        <div class="nav-group">
+          <p class="nav-kicker">Laporan</p>
+          <a class="nav-link" href="laporan.html#monitoring">Monitoring Progress DO</a>
+          <a class="nav-link" href="laporan.html#rekap">Rekap Bahan Ajar</a>
+          <a class="nav-link" href="histori.html">Histori Transaksi</a>
+        </div>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-chip">
+          <strong data-user-name>Admin SITTA</strong>
+          <span data-user-role>Administrator - Pusat</span>
+        </div>
+        <button class="btn ghost" type="button" data-logout>Keluar</button>
+      </div>
+    </aside>
+
+    <main class="page">
+      <header class="topbar">
+        <div class="page-title">
+          <h1>Informasi Stok Bahan Ajar</h1>
+          <p>Data stok ditampilkan secara dinamis dari file JavaScript dan dapat ditambah melalui form DOM.</p>
+        </div>
+        <div id="local-clock" class="clock-pill" aria-live="polite"></div>
+      </header>
+
+      <section class="content-panel stack">
+        <div class="toolbar">
+          <div class="field">
+            <label for="stock-search">Cari bahan ajar</label>
+            <input id="stock-search" type="search" placeholder="Kode, nama, atau lokasi">
+          </div>
+          <div class="field">
+            <label for="stock-filter">Filter</label>
+            <select id="stock-filter">
+              <option value="all">Semua data</option>
+              <option value="BMP">Jenis BMP</option>
+              <option value="low">Stok menipis</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="stock-sort">Urutkan</label>
+            <select id="stock-sort">
+              <option value="name">Nama bahan ajar</option>
+              <option value="code">Kode barang</option>
+              <option value="stock-desc">Stok terbanyak</option>
+              <option value="stock-asc">Stok tersedikit</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table aria-label="Tabel stok bahan ajar">
+            <thead>
+              <tr>
+                <th>Kode Lokasi</th>
+                <th>Bahan Ajar</th>
+                <th>Jenis</th>
+                <th>Edisi</th>
+                <th>Stok</th>
+                <th>Status</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="stock-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="content-panel stack" style="margin-top: 18px;">
+        <div>
+          <h2>Tambah Baris Stok</h2>
+          <p>Form ini menambahkan baris baru ke tabel menggunakan JavaScript DOM dan menyimpannya di browser.</p>
+        </div>
+        <form id="stock-form" class="panel-form">
+          <div class="form-grid">
+            <div class="field">
+              <label for="kodeLokasi">Kode Lokasi</label>
+              <input id="kodeLokasi" name="kodeLokasi" placeholder="0JKT02" required>
+            </div>
+            <div class="field">
+              <label for="kodeBarang">Kode Barang</label>
+              <input id="kodeBarang" name="kodeBarang" placeholder="EKMA4321" required>
+            </div>
+            <div class="field">
+              <label for="namaBarang">Nama Barang</label>
+              <input id="namaBarang" name="namaBarang" placeholder="Judul bahan ajar" required>
+            </div>
+            <div class="field">
+              <label for="jenisBarang">Jenis Barang</label>
+              <select id="jenisBarang" name="jenisBarang" required>
+                <option value="BMP">BMP</option>
+                <option value="Non-BMP">Non-BMP</option>
+                <option value="Digital">Digital</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="edisi">Edisi</label>
+              <input id="edisi" name="edisi" type="number" min="1" placeholder="1" required>
+            </div>
+            <div class="field">
+              <label for="stok">Stok</label>
+              <input id="stok" name="stok" type="number" min="0" placeholder="100" required>
+            </div>
+          </div>
+          <div class="field">
+            <label for="cover">Cover</label>
+            <select id="cover" name="cover">
+              <option value="img/img/pengantar_komunikasi.jpg">Pengantar Ilmu Komunikasi</option>
+              <option value="img/img/manajemen_keuangan.jpg">Manajemen Keuangan</option>
+              <option value="img/img/kepemimpinan.jpg">Kepemimpinan</option>
+              <option value="img/img/mikrobiologi.jpg">Mikrobiologi Dasar</option>
+              <option value="img/img/paud_perkembangan.jpeg">Perkembangan Anak Usia Dini</option>
+            </select>
+          </div>
+          <div class="form-actions">
+            <button class="btn" type="submit">Tambah Stok</button>
+            <button class="btn ghost" type="reset">Reset</button>
+          </div>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast" role="alert"></div>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

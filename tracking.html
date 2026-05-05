@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tracking Pengiriman - SITTA Bahan Ajar</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="tracking">
+  <div class="mobile-nav">
+    <label class="sr-only" for="mobile-nav-select">Navigasi</label>
+    <select id="mobile-nav-select">
+      <option value="dashboard.html">Dashboard</option>
+      <option value="stok.html">Informasi Bahan Ajar</option>
+      <option value="tracking.html">Tracking Pengiriman</option>
+      <option value="laporan.html">Laporan</option>
+      <option value="histori.html">Histori Transaksi</option>
+    </select>
+  </div>
+
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Navigasi utama">
+      <div class="brand-lockup">
+        <div class="brand-mark" aria-hidden="true">UT</div>
+        <div>
+          <p class="brand-text">SITTA</p>
+          <p class="brand-title">Bahan Ajar</p>
+        </div>
+      </div>
+      <nav>
+        <ul class="nav-list">
+          <li><a class="nav-link" href="dashboard.html">Dashboard</a></li>
+          <li><a class="nav-link" href="stok.html">Informasi Bahan Ajar</a></li>
+          <li><a class="nav-link" href="tracking.html">Tracking Pengiriman</a></li>
+        </ul>
+        <div class="nav-group">
+          <p class="nav-kicker">Laporan</p>
+          <a class="nav-link" href="laporan.html#monitoring">Monitoring Progress DO</a>
+          <a class="nav-link" href="laporan.html#rekap">Rekap Bahan Ajar</a>
+          <a class="nav-link" href="histori.html">Histori Transaksi</a>
+        </div>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-chip">
+          <strong data-user-name>Admin SITTA</strong>
+          <span data-user-role>Administrator - Pusat</span>
+        </div>
+        <button class="btn ghost" type="button" data-logout>Keluar</button>
+      </div>
+    </aside>
+
+    <main class="page">
+      <header class="topbar">
+        <div class="page-title">
+          <h1>Tracking Pengiriman</h1>
+          <p>Masukkan nomor Delivery Order untuk melihat status, ekspedisi, tanggal kirim, paket, dan total pembayaran.</p>
+        </div>
+        <div id="local-clock" class="clock-pill" aria-live="polite"></div>
+      </header>
+
+      <section class="tracking-hero">
+        <article class="content-panel">
+          <h2>Cari Delivery Order</h2>
+          <form id="tracking-form" class="panel-form" style="margin-top: 16px;">
+            <div class="field">
+              <label for="nomor-do">Nomor Delivery Order</label>
+              <input id="nomor-do" name="nomor-do" list="do-list" placeholder="2023001234" required>
+              <datalist id="do-list"></datalist>
+            </div>
+            <div class="form-actions">
+              <button class="btn" type="submit">Cari</button>
+              <div data-demo-do class="form-actions" aria-label="Contoh nomor DO">
+                <button class="btn secondary" type="button" data-do="2023001234">2023001234</button>
+                <button class="btn secondary" type="button" data-do="2023005678">2023005678</button>
+              </div>
+            </div>
+          </form>
+        </article>
+
+        <section id="tracking-result" aria-live="polite">
+          <div class="empty-state">Hasil tracking akan tampil setelah nomor DO dicari.</div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast" role="alert"></div>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

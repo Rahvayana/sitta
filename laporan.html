@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laporan - SITTA Bahan Ajar</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="laporan">
+  <div class="mobile-nav">
+    <label class="sr-only" for="mobile-nav-select">Navigasi</label>
+    <select id="mobile-nav-select">
+      <option value="dashboard.html">Dashboard</option>
+      <option value="stok.html">Informasi Bahan Ajar</option>
+      <option value="tracking.html">Tracking Pengiriman</option>
+      <option value="laporan.html">Laporan</option>
+      <option value="histori.html">Histori Transaksi</option>
+    </select>
+  </div>
+
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Navigasi utama">
+      <div class="brand-lockup">
+        <div class="brand-mark" aria-hidden="true">UT</div>
+        <div>
+          <p class="brand-text">SITTA</p>
+          <p class="brand-title">Bahan Ajar</p>
+        </div>
+      </div>
+      <nav>
+        <ul class="nav-list">
+          <li><a class="nav-link" href="dashboard.html">Dashboard</a></li>
+          <li><a class="nav-link" href="stok.html">Informasi Bahan Ajar</a></li>
+          <li><a class="nav-link" href="tracking.html">Tracking Pengiriman</a></li>
+        </ul>
+        <div class="nav-group">
+          <p class="nav-kicker">Laporan</p>
+          <a class="nav-link" href="laporan.html#monitoring">Monitoring Progress DO</a>
+          <a class="nav-link" href="laporan.html#rekap">Rekap Bahan Ajar</a>
+          <a class="nav-link" href="histori.html">Histori Transaksi</a>
+        </div>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-chip">
+          <strong data-user-name>Admin SITTA</strong>
+          <span data-user-role>Administrator - Pusat</span>
+        </div>
+        <button class="btn ghost" type="button" data-logout>Keluar</button>
+      </div>
+    </aside>
+
+    <main class="page">
+      <header class="topbar">
+        <div class="page-title">
+          <h1>Laporan Bahan Ajar</h1>
+          <p>Monitoring progress Delivery Order dan rekap stok bahan ajar dari data dummy.</p>
+        </div>
+        <div id="local-clock" class="clock-pill" aria-live="polite"></div>
+      </header>
+
+      <div class="stack">
+        <section id="monitoring" class="content-panel stack">
+          <div>
+            <h2>Monitoring Progress DO Bahan Ajar</h2>
+            <p>Progress dihitung dari status dan perjalanan ekspedisi pada data tracking.</p>
+          </div>
+          <div class="table-wrap">
+            <table aria-label="Monitoring progress delivery order">
+              <thead>
+                <tr>
+                  <th>Nomor DO</th>
+                  <th>Nama</th>
+                  <th>Ekspedisi</th>
+                  <th>Tanggal Kirim</th>
+                  <th>Progress</th>
+                  <th>Nilai</th>
+                </tr>
+              </thead>
+              <tbody id="monitoring-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="rekap" class="report-grid">
+          <article class="content-panel stack">
+            <div>
+              <h2>Rekap Bahan Ajar</h2>
+              <p>Jumlah item, total stok, dan data stok rendah per jenis barang.</p>
+            </div>
+            <div class="table-wrap">
+              <table aria-label="Rekap bahan ajar">
+                <thead>
+                  <tr>
+                    <th>Jenis</th>
+                    <th>Item</th>
+                    <th>Total Stok</th>
+                    <th>Stok Rendah</th>
+                  </tr>
+                </thead>
+                <tbody id="recap-body"></tbody>
+              </table>
+            </div>
+          </article>
+
+          <article class="content-panel">
+            <h2>Grafik Stok</h2>
+            <p>Perbandingan jumlah stok setiap kode barang.</p>
+            <div id="stock-chart" class="chart-list" aria-label="Grafik stok bahan ajar"></div>
+          </article>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div id="toast" class="toast" role="alert"></div>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
