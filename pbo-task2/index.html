@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prakiraan Cuaca Jakarta</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="app.js" defer></script>
+    <script src="axios.js" defer></script>
+</head>
+<body>
+    <main class="weather-app">
+        <header class="forecast-header">
+            <div class="title-block">
+                <p class="eyebrow">Prakiraan per jam</p>
+                <h1>Cuaca Jakarta</h1>
+                <p class="subtitle">Waktu pengukuran dan suhu dari data prakiraan cuaca.</p>
+
+                <table class="student-profile" aria-label="Identitas mahasiswa">
+                    <tbody>
+                        <tr>
+                            <th scope="row">Nama</th>
+                            <td>Fahrul Sanjaya</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">NIM</th>
+                            <td>055179048</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">UT Cabang</th>
+                            <td>Surabaya</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <button id="loadWeatherBtn" class="primary-button" type="button">
+                <span class="button-dot" aria-hidden="true"></span>
+                Ambil data
+            </button>
+        </header>
+
+        <section class="toolbar" aria-label="Kontrol data cuaca">
+            <label class="search-field">
+                <span>Cari waktu</span>
+                <input
+                    id="searchWeather"
+                    type="search"
+                    placeholder="Contoh: 22-05-2026 atau 14:00"
+                    autocomplete="off"
+                    disabled
+                >
+            </label>
+
+            <label class="select-field">
+                <span>Urutkan</span>
+                <select id="sortWeather" disabled>
+                    <option value="time-asc">Waktu paling awal</option>
+                    <option value="time-desc">Waktu paling akhir</option>
+                    <option value="temp-desc">Suhu tertinggi</option>
+                    <option value="temp-asc">Suhu terendah</option>
+                </select>
+            </label>
+
+            <button id="toggleLimitBtn" class="secondary-button" type="button" disabled>
+                Tampilkan semua
+            </button>
+        </section>
+
+        <section class="reading-summary" aria-live="polite">
+            <p id="resultLabel" class="result-label">Belum ada data cuaca yang ditampilkan.</p>
+
+            <dl class="summary-metrics">
+                <div>
+                    <dt>Terendah</dt>
+                    <dd id="minTemp">--</dd>
+                </div>
+                <div>
+                    <dt>Rata-rata</dt>
+                    <dd id="avgTemp">--</dd>
+                </div>
+                <div>
+                    <dt>Tertinggi</dt>
+                    <dd id="maxTemp">--</dd>
+                </div>
+            </dl>
+        </section>
+
+        <section class="forecast-layout">
+            <section class="table-region" aria-label="Tabel prakiraan cuaca">
+                <table class="forecast-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Time</th>
+                            <th scope="col">Temperature 2m</th>
+                        </tr>
+                    </thead>
+                    <tbody id="weatherRows">
+                        <tr class="empty-row">
+                            <td colspan="2">Data akan muncul setelah prakiraan dimuat.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <aside class="detail-panel" aria-live="polite">
+                <p class="detail-label">Detail suhu</p>
+                <h2 id="selectedTime">Pilih satu baris</h2>
+                <p id="selectedTemp" class="selected-temperature">--</p>
+                <p id="selectedNote" class="detail-note">Klik baris tabel untuk melihat pembacaan cuaca.</p>
+            </aside>
+        </section>
+    </main>
+</body>
+</html>
