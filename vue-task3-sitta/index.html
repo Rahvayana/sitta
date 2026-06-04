@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tugas Praktik 3 - SITTA Vue.js</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://unpkg.com/vue@2.7.16/dist/vue.js"></script>
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+  <div id="app" v-cloak>
+    <app-header
+      :active-tab="activeTab"
+      :tabs="tabs"
+      :loading="loading"
+      @switch-tab="activeTab = $event"
+      @reload="loadData">
+    </app-header>
+
+    <main class="app-layout">
+      <section class="workspace" aria-live="polite">
+        <div v-if="loading" class="skeleton-area" aria-label="Data sedang dimuat">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+
+        <div v-else-if="errorMessage" class="state-box state-box--error">
+          <strong v-text="errorMessage"></strong>
+          <p>Pastikan file <code>data/dataBahanAjar.json</code> tersedia, lalu muat ulang data.</p>
+          <button class="btn btn-primary" type="button" @click="loadData">Muat ulang data</button>
+        </div>
+
+        <template v-else>
+          <summary-panel
+            :filtered-count="filteredStock.length"
+            :critical-count="criticalStock.length"
+            :order-total="orderTotal"
+            :selected-upbjj="filters.upbjj">
+          </summary-panel>
+
+          <section v-show="activeTab === 'stok'" class="tab-panel" aria-labelledby="tab-stok">
+            <stock-browser
+              :stock="filteredStock"
+              :categories="kategoriList"
+              :upbjj-list="upbjjList"
+              :filters="filters"
+              :sort-key="sortKey"
+              :sort-direction="sortDirection"
+              @update-filter="updateFilter"
+              @sort="setSort">
+            </stock-browser>
+          </section>
+
+          <section v-show="activeTab === 'pesan'" class="tab-panel" aria-labelledby="tab-pesan">
+            <order-form
+              :stock="stokList"
+              :packages="paketList"
+              :shipping-options="pengirimanList"
+              :order="order"
+              :errors="formErrors"
+              :order-total="orderTotal"
+              :selected-package="selectedPackage"
+              @toggle-item="toggleOrderItem"
+              @submit-order="submitOrder"
+              @reset-order="resetOrder">
+            </order-form>
+          </section>
+
+          <section v-show="activeTab === 'tracking'" class="tab-panel" aria-labelledby="tab-tracking">
+            <tracking-panel
+              :tracking-list="trackingList"
+              :tracking-code="trackingCode"
+              :tracking-result="trackingResult"
+              @update-code="trackingCode = $event">
+            </tracking-panel>
+          </section>
+        </template>
+      </section>
+
+      <aside class="side-panel" aria-label="Aktivitas sistem">
+        <h2>Note</h2>
+        <p class="muted">Pilihan UPBJJ, isi pesanan, dan kode tracking.</p>
+        <ol class="activity-list">
+          <li v-for="(entry, index) in activityLog" :key="entry.id">
+            <span>{{ index + 1 }}</span>
+            <p>{{ entry.text }}</p>
+          </li>
+        </ol>
+      </aside>
+    </main>
+  </div>
+
+  <script type="text/x-template" id="app-header-template">
+    <header class="topbar">
+      <div class="brand-block">
+        <p class="course-code">STSI4209 Tugas Praktik 3</p>
+        <h1>SITTA Bahan Ajar UT</h1>
+        <p>Aplikasi Vue.js untuk memantau stok, membuat pesanan, dan mengecek distribusi bahan ajar.</p>
+      </div>
+
+      <nav class="tab-nav" aria-label="Navigasi fitur">
+        <button
+          v-for="tab in tabs"
+          :id="'tab-' + tab.id"
+          :key="tab.id"
+          class="tab-button"
+          :class="{ 'is-active': activeTab === tab.id }"
+          type="button"
+          @click="$emit('switch-tab', tab.id)"
+          @keyup.enter="$emit('switch-tab', tab.id)">
+          <i :data-lucide="tab.icon" aria-hidden="true"></i>
+          <span>{{ tab.label }}</span>
+        </button>
+      </nav>
+
+      <button class="icon-action" type="button" :disabled="loading" @click="$emit('reload')" aria-label="Muat ulang data">
+        <i data-lucide="refresh-cw" aria-hidden="true"></i>
+      </button>
+    </header>
+  </script>
+
+  <script type="text/x-template" id="summary-template">
+    <section class="summary-grid" aria-label="Ringkasan data">
+      <article>
+        <span>Data tampil</span>
+        <strong>{{ filteredCount }}</strong>
+        <p>Stok sesuai filter {{ selectedUpbjj || 'semua UPBJJ' }}</p>
+      </article>
+      <article>
+        <span>Perlu reorder</span>
+        <strong>{{ criticalCount }}</strong>
+        <p v-if="criticalCount > 0">Ada stok di bawah safety.</p>
+        <p v-else>Semua stok aman.</p>
+      </article>
+      <article>
+        <span>Total pesanan</span>
+        <strong>{{ orderTotal | rupiah }}</strong>
+        <p>Terhitung dari paket dan buku terpilih.</p>
+      </article>
+    </section>
+  </script>
+
+  <script type="text/x-template" id="stock-browser-template">
+    <section class="surface">
+      <div class="section-heading">
+        <div>
+          <h2>Daftar Stok Bahan Ajar</h2>
+          <p>Gunakan filter, pencarian, dan pengurutan untuk menemukan bahan ajar.</p>
+        </div>
+      </div>
+
+      <div class="filter-grid">
+        <label>
+          <span>Cari kode atau judul</span>
+          <input
+            :value="filters.search"
+            type="search"
+            placeholder="Contoh: EKMA4116"
+            @input="$emit('update-filter', 'search', $event.target.value)"
+            @keyup.esc="$emit('update-filter', 'search', '')">
+        </label>
+
+        <label>
+          <span>UPBJJ</span>
+          <select :value="filters.upbjj" @change="$emit('update-filter', 'upbjj', $event.target.value)">
+            <option value="">Semua UPBJJ</option>
+            <option v-for="city in upbjjList" :key="city" :value="city">{{ city }}</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Kategori</span>
+          <select :value="filters.kategori" @change="$emit('update-filter', 'kategori', $event.target.value)">
+            <option value="">Semua kategori</option>
+            <option v-for="category in categories" :key="category" :value="category">{{ category }}</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="table-wrap" v-if="stock.length > 0">
+        <table>
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>
+                <button type="button" @click="$emit('sort', 'kode')">Kode</button>
+              </th>
+              <th>Judul</th>
+              <th>Kategori</th>
+              <th>
+                <button type="button" @click="$emit('sort', 'qty')">Stok</button>
+              </th>
+              <th>Catatan</th>
+            </tr>
+          </thead>
+          <tbody>
+            <stock-row
+              v-for="(item, index) in stock"
+              :key="item.kode"
+              :item="item"
+              :index="index"
+              :sort-key="sortKey"
+              :sort-direction="sortDirection">
+            </stock-row>
+          </tbody>
+        </table>
+      </div>
+
+      <div v-else class="state-box">
+        <strong>Stok tidak ditemukan.</strong>
+        <p>Tekan Esc di kolom pencarian atau ubah filter untuk melihat data lain.</p>
+      </div>
+    </section>
+  </script>
+
+  <script type="text/x-template" id="stock-row-template">
+    <tr :class="{ 'is-critical': item.qty < item.safety }">
+      <td>{{ index + 1 }}</td>
+      <td>
+        <strong>{{ item.kode }}</strong>
+        <small>{{ item.upbjj }} · {{ item.lokasiRak }}</small>
+      </td>
+      <td>{{ item.judul | titleCase }}</td>
+      <td>{{ item.kategori }}</td>
+      <td>
+        <span class="stock-pill" :class="item.qty < item.safety ? 'stock-pill--danger' : 'stock-pill--safe'">
+          {{ item.qty }} / {{ item.safety }}
+        </span>
+      </td>
+      <td v-html="item.catatanHTML"></td>
+    </tr>
+  </script>
+
+  <script type="text/x-template" id="order-form-template">
+    <section class="surface">
+      <div class="section-heading">
+        <div>
+          <h2>Formulir Pemesanan</h2>
+          <p>Isi identitas, pilih paket atau bahan ajar satuan, lalu cek validasi.</p>
+        </div>
+        <strong class="total-badge">{{ orderTotal | rupiah }}</strong>
+      </div>
+
+      <form class="order-grid" @submit.prevent="$emit('submit-order')" @keydown.ctrl.enter="$emit('submit-order')">
+        <label>
+          <span>NIM</span>
+          <input v-model.trim="order.nim" type="text" inputmode="numeric" placeholder="9 digit NIM">
+          <small v-if="errors.nim">{{ errors.nim }}</small>
+        </label>
+
+        <label>
+          <span>Nama mahasiswa</span>
+          <input v-model.trim="order.nama" type="text" placeholder="Nama lengkap">
+          <small v-if="errors.nama">{{ errors.nama }}</small>
+        </label>
+
+        <label>
+          <span>Paket bahan ajar</span>
+          <select v-model="order.packageCode">
+            <option value="">Tanpa paket</option>
+            <option v-for="paket in packages" :key="paket.kode" :value="paket.kode">
+              {{ paket.nama }} - {{ paket.harga | rupiah }}
+            </option>
+          </select>
+        </label>
+
+        <label>
+          <span>Pengiriman</span>
+          <select v-model="order.shippingCode">
+            <option value="">Pilih pengiriman</option>
+            <option v-for="option in shippingOptions" :key="option.kode" :value="option.kode">
+              {{ option.nama }}
+            </option>
+          </select>
+          <small v-if="errors.shippingCode">{{ errors.shippingCode }}</small>
+        </label>
+
+        <div class="full-span">
+          <div class="choice-header">
+            <strong>Bahan ajar satuan</strong>
+            <span>{{ order.items.length }} dipilih</span>
+          </div>
+          <div class="choice-list">
+            <button
+              v-for="item in stock"
+              :key="item.kode"
+              class="choice-item"
+              :class="{ 'is-selected': order.items.indexOf(item.kode) !== -1 }"
+              type="button"
+              @click="$emit('toggle-item', item.kode)">
+              <span>{{ item.kode }}</span>
+              <strong>{{ item.judul }}</strong>
+              <small>{{ item.harga | rupiah }}</small>
+            </button>
+          </div>
+        </div>
+
+        <div v-if="selectedPackage" class="package-note full-span">
+          <strong>{{ selectedPackage.nama }}</strong>
+          <p>Isi paket: {{ selectedPackage.isi.join(', ') }}</p>
+        </div>
+
+        <div v-if="errors.packageCode" class="state-box state-box--error full-span">
+          <strong>{{ errors.packageCode }}</strong>
+          <p>Pilih salah satu paket atau pilih bahan ajar satuan dari daftar.</p>
+        </div>
+
+        <div v-if="order.submitted" class="state-box state-box--success full-span">
+          <strong>Pesanan berhasil divalidasi.</strong>
+          <p>{{ order.nama }} dapat melanjutkan proses pembayaran sebesar {{ orderTotal | rupiah }}.</p>
+        </div>
+
+        <div class="form-actions full-span">
+          <button class="btn btn-ghost" type="button" @click="$emit('reset-order')">Reset formulir</button>
+          <button class="btn btn-primary" type="submit">Validasi pesanan</button>
+        </div>
+      </form>
+    </section>
+  </script>
+
+  <script type="text/x-template" id="tracking-template">
+    <section class="surface">
+      <div class="section-heading">
+        <div>
+          <h2>Tracking Distribusi</h2>
+          <p>Cari nomor delivery order untuk melihat status pengiriman.</p>
+        </div>
+      </div>
+
+      <label class="tracking-search">
+        <span>Kode DO</span>
+        <input
+          :value="trackingCode"
+          type="search"
+          placeholder="Contoh: DO2025-0001"
+          @input="$emit('update-code', $event.target.value.toUpperCase())">
+      </label>
+
+      <div v-if="trackingResult" class="tracking-card">
+        <div class="tracking-head">
+          <div>
+            <span>{{ trackingResult.code }}</span>
+            <h3>{{ trackingResult.nama }}</h3>
+            <p>{{ trackingResult.nim }} · {{ trackingResult.ekspedisi }}</p>
+          </div>
+          <strong>{{ trackingResult.status }}</strong>
+        </div>
+
+        <dl class="tracking-detail">
+          <div v-for="(value, key) in trackingResult.info" :key="key">
+            <dt>{{ key | labelize }}</dt>
+            <dd>{{ value }}</dd>
+          </div>
+        </dl>
+
+        <ol class="timeline">
+          <li v-for="(step, index) in trackingResult.perjalanan" :key="step.waktu">
+            <span>{{ index + 1 }}</span>
+            <div>
+              <strong>{{ step.waktu | tanggalJam }}</strong>
+              <p>{{ step.keterangan }}</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+
+      <div v-else class="state-box">
+        <strong>Tracking belum dipilih.</strong>
+        <p>Kode tersedia: {{ trackingList.map(function(item) { return item.code; }).join(', ') }}</p>
+      </div>
+    </section>
+  </script>
+</body>
+</html>

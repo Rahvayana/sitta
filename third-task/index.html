@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tugas 03 - Data Cryptocurrency</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <main id="app" class="phone-shell" aria-labelledby="page-title" v-cloak>
+    <section class="app-screen">
+      <header class="app-header">
+        <div>
+          <p class="course-label">MSIM4401 Tugas 03</p>
+          <h1 id="page-title">Data Cryptocurrency</h1>
+          <p class="intro">Data rank, name, symbol, dan price_usd dari API CoinLore.</p>
+        </div>
+        <button class="icon-button" type="button" aria-label="Muat ulang data" :disabled="isLoading" :aria-busy="String(isLoading)" @click="loadCryptos">
+          <span aria-hidden="true">&#8635;</span>
+        </button>
+      </header>
+
+      <section class="student-card" aria-label="Identitas mahasiswa">
+        <div>
+          <span>Nama</span>
+          <strong>Fahrul Sanjaya</strong>
+        </div>
+        <div>
+          <span>NIM</span>
+          <strong>055179048</strong>
+        </div>
+      </section>
+
+      <section class="summary-strip" aria-label="Ringkasan data">
+        <div>
+          <span>Total data</span>
+          <strong>{{ totalCount }}</strong>
+        </div>
+        <div>
+          <span>Ditampilkan</span>
+          <strong>{{ shownCount }}</strong>
+        </div>
+        <div>
+          <span>Status</span>
+          <strong>{{ statusText }}</strong>
+        </div>
+      </section>
+
+      <form class="search-bar" role="search" @submit.prevent>
+        <label for="searchInput">Cari nama atau symbol</label>
+        <input id="searchInput" v-model.trim="searchTerm" type="search" placeholder="Contoh: Bitcoin atau BTC" autocomplete="off">
+      </form>
+
+      <section class="data-panel" aria-live="polite">
+        <div v-if="isLoading" class="skeleton-list">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+
+        <div v-else-if="hasError" class="message-state error">
+          <strong>Data belum berhasil dimuat.</strong>
+          <p>Periksa koneksi internet, lalu tekan tombol muat ulang.</p>
+        </div>
+
+        <div v-else-if="isEmpty" class="message-state">
+          <strong>Data tidak ditemukan.</strong>
+          <p>Coba kata kunci lain untuk melihat cryptocurrency yang tersedia.</p>
+        </div>
+
+        <ol v-else class="crypto-list" aria-label="Daftar cryptocurrency">
+          <li class="crypto-item" v-for="coin in filteredCryptos" :key="coin.rank + '-' + coin.symbol">
+            <span class="rank">#{{ coin.rank }}</span>
+            <div class="coin-name">
+              <strong>{{ coin.name }}</strong>
+              <span>{{ coin.symbol }}</span>
+            </div>
+            <strong class="price">{{ formatUsd(coin.priceUsd) }}</strong>
+          </li>
+        </ol>
+      </section>
+    </section>
+  </main>
+</body>
+</html>
